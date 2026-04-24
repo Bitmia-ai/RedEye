@@ -1,0 +1,115 @@
+# {{PROJECT_NAME}} — RedEye Reference
+
+> **Extended reference for agent roles, permissions, and protocols.** Only read when spawning agents — NOT every iteration.
+
+## Control Files
+
+```
+.redeye/config.md         # Essential config (read every iteration)
+.redeye/reference.md      # This file — role details (read when spawning agents)
+.redeye/state.json        # Machine-readable state (CTO-managed)
+.redeye/steering.md       # Tactical directives (CEO-owned)
+.redeye/inbox.md          # Questions + credential requests (bidirectional)
+.redeye/tasks.md          # Work items (CEO adds requests, agents add discovered)
+.redeye/status.md         # Dashboard for CEO (CTO-generated)
+.redeye/changelog.md      # Append-only iteration history (CTO-managed)
+.redeye/feedback.md       # User Tester product feedback (User Tester-managed)
+.redeye/schedules.md      # Recurring tasks (CEO-defined)
+.redeye/tester-reports.md # Bug reports from User Tester (CTO merges at TRIAGE)
+```
+
+## Phase Transitions (Full)
+
+- **TRIAGE -> PLAN:** Task selected, spec needed.
+- **PLAN -> BUILD:** Spec written and approved.
+- **BUILD -> REVIEW:** All code written, declared tests passing.
+- **REVIEW -> DEPLOY:** Zero Critical/Major findings (or all fixed).
+- **REVIEW -> BUILD:** Critical/Major findings, review_cycles < max.
+- **REVIEW -> TRIAGE:** review_cycles >= max, park task.
+- **DEPLOY -> VERIFY:** Deployment succeeded.
+- **DEPLOY -> STABILIZE:** Deployment failed.
+- **VERIFY -> MERGE:** Healthy. Hand off to MERGE for worktree merge + cleanup.
+- **VERIFY -> STABILIZE:** Unhealthy.
+- **MERGE -> TRIAGE:** Worktree merged + torn down. Task cycle complete.
+- **STABILIZE -> TRIAGE:** Fixed.
+- **STABILIZE -> STABILIZE:** Failed, attempts < 3.
+- **STABILIZE -> TRIAGE (parked):** Failed, attempts >= 3. Park the task and route back.
+- **SCHEDULES -> TRIAGE:** Tasks complete.
+- **INCORPORATE -> TRIAGE:** Directives processed.
+
+## Role Definitions
+
+### CTO (orchestrator)
+- Runs the phase machine. Reads control files. Writes `.redeye/state.json` and `.redeye/status.md`.
+- Spawns agents via Task tool. Assigns tasks. Collects results.
+- Never writes application source code directly.
+
+### VP Product
+- Triages tasks. Writes user stories. Prioritizes work.
+- Reads: .redeye/tasks.md, .redeye/config.md, .redeye/steering.md, .redeye/feedback.md, .redeye/tester-reports.md.
+- Writes: .redeye/tasks.md (Triaged section), briefs in .redeye/inbox.md.
+
+### VP Engineering
+- Writes implementation specs. Defines task breakdown. Sets test strategies.
+- Reads: .redeye/tasks.md (triaged items), architecture docs.
+- Writes: Spec files in `docs/specs/`.
+
+### Dev (generic/specialist)
+- Implements tasks from specs. Writes unit/integration tests.
+- Writes: source code, test files, spec sub-task status updates.
+- Cannot write: any control file, .redeye/config.md, .redeye/status.md.
+
+### Ops/SRE
+- Deploys to dev environment. Runs smoke tests. Debugs infra issues.
+- Writes: deploy scripts, infra config.
+
+### QA Lead
+- Writes E2E test specs during BUILD. Runs full regression during DEPLOY.
+- Writes: test files, test manifest.
+- Cannot write: application source code, control files.
+
+### User Tester
+- Tests the live app as a real user. Spawned after DEPLOY, not continuously.
+- Uses personas from .redeye/config.md. Reports bugs to .redeye/tester-reports.md.
+- Writes product feedback to .redeye/feedback.md.
+- Cannot write: source code, .redeye/tasks.md.
+
+### Documenter
+- Runs after REVIEW phase. Updates `**/CLAUDE.md` files with factual content.
+- Cannot write: source code, control files, rules/instructions in CLAUDE.md.
+
+### Security Reviewer
+- Reviews code for: injection, auth bypass, secret leaks, fail-open, privilege escalation.
+- Writes: review findings file only.
+
+### Systems Reviewer
+- Reviews code for: performance, error handling, resource leaks, API contracts.
+- Writes: review findings file only.
+
+### Integration Reviewer
+- Reviews code for: cross-service compatibility, breaking changes, migration safety.
+- Writes: review findings file only.
+
+### UX Reviewer
+- Reviews UI changes for: accessibility, responsiveness, user flow, consistency.
+- Writes: review findings file only.
+
+## Agent Permission Boundaries
+
+| Role | Can Write | Cannot Write |
+|------|----------|-------------|
+| Dev | Source code, test files, spec sub-task status | .redeye/config.md, .redeye/state.json, .redeye/status.md, .redeye/steering.md, .redeye/config.md |
+| Reviewer | Review findings file only | Source code, any control file, specs |
+| Ops/SRE | Deploy scripts, infra config | Application source code, .redeye/config.md |
+| QA Lead | Test files, test manifest | Application source code, control files |
+| User Tester | .redeye/tester-reports.md, .redeye/feedback.md | Source code, .redeye/tasks.md |
+| Documenter | **/CLAUDE.md (factual content only) | Source code, control files, rules in CLAUDE.md |
+| VP Product | .redeye/tasks.md, .redeye/inbox.md questions, briefs | Source code, .redeye/config.md state |
+| VP Engineering | Specs, decisions | Source code, .redeye/config.md state |
+
+## Summarization Protocol
+
+- **Default:** 200 words max.
+- **BUILD phase:** 500 words max. MUST list every file created or modified.
+- **REVIEW phase:** 500 words max. MUST list every finding with severity.
+- All summaries go into the iteration log in `.redeye/state.json`.

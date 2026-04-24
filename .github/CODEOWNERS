@@ -1,0 +1,3 @@
+# Default reviewer for every PR. Add path-specific lines below when the
+# project grows enough that one human cannot reasonably own everything.
+* @Bitmia-ai

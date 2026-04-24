@@ -1,0 +1,29 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A second push to the same branch cancels any in-flight CI for the older
+# commit. Keeps the queue short when a runner-allocation outage stacks up
+# retries.
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install bats, jq, shellcheck, file
+        run: sudo apt-get install -y bats jq shellcheck file
+
+      - name: shellcheck
+        run: shellcheck --severity=warning scripts/*.sh hooks/*.sh
+
+      - name: bats
+        run: bats tests/

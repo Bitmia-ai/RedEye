@@ -1,0 +1,13 @@
+{
+  "name": "bitmia-ai",
+  "owner": {
+    "name": "Bitmia-ai"
+  },
+  "plugins": [
+    {
+      "name": "redeye",
+      "source": "./",
+      "description": "Autonomous dev agent — works through your task list while you sleep. Zero config, no knowledge required."
+    }
+  ]
+}

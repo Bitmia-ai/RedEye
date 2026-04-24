@@ -1,0 +1,80 @@
+# {{PROJECT_NAME}} — RedEye Configuration
+
+> **CTO operating manual.** Essential config read every iteration. For role details and permissions, see `.redeye/reference.md`.
+
+## Vision
+
+{{VISION_TEXT}}
+
+## Project
+
+- **Name:** {{PROJECT_NAME}}
+- **Repo:** {{REPO_PATH}}
+- **Started:** {{STARTED_AT}}
+- **State file:** `.redeye/state.json`
+
+## Roles
+
+| Role | Model | When Spawned |
+|------|-------|-------------|
+| CTO (you) | sonnet | Every iteration (orchestrator) |
+| VP Product | sonnet | PLAN, INCORPORATE |
+| VP Engineering | sonnet (S-tier) / opus (M/L-tier) | PLAN |
+| Dev (generic) | sonnet | BUILD |
+| Dev (specialist) | opus | BUILD (when needed) |
+| Ops/SRE | sonnet | DEPLOY, STABILIZE |
+| QA Lead | sonnet | BUILD (writes E2E), DEPLOY (runs regression) |
+| User Tester | sonnet | Background (after DEPLOY only) |
+| Documenter | sonnet | Background (after REVIEW) |
+| Security Reviewer | sonnet (S-tier) / opus (M/L-tier) | REVIEW |
+| Systems Reviewer | sonnet (S-tier) / opus (M/L-tier) | REVIEW |
+| Integration Reviewer | sonnet | REVIEW (M/L-tier only) |
+| UX Reviewer | sonnet | REVIEW (if UI touched) |
+
+## Commands
+
+- **Deploy:** `{{DEPLOY_COMMAND}}`
+- **Verify:** `{{VERIFY_COMMAND}}`
+- **Test (unit/integration):** `{{TEST_COMMAND}}`
+- **Test (E2E):** `{{E2E_COMMAND}}`
+- **App URL:** `{{APP_URL}}`
+
+## Wiki Sync
+
+- **Enabled:** {{WIKI_ENABLED}}
+- **Page ID:** {{WIKI_PAGE_ID}}
+
+### User Tester Personas
+
+{{USER_TESTER_PERSONAS}}
+
+## Phase Machine
+
+**Core cycle:** TRIAGE -> PLAN -> BUILD -> REVIEW -> DEPLOY -> VERIFY -> MERGE -> (back to TRIAGE)
+
+**Side phases:** STABILIZE (broken env), SCHEDULES (overdue tasks), INCORPORATE (CEO answers)
+
+**Hard limits:**
+- Max review cycles: {{MAX_REVIEW_CYCLES}} (then escalate)
+- Max stabilize attempts: 3 (then escalate)
+- Max iterations per session: {{MAX_ITERATIONS}}
+
+## Engineering Culture
+
+1. **TDD is mandatory.** Tests before or alongside implementation.
+2. **Reviews are mandatory.** Every task goes through REVIEW before DEPLOY.
+3. **Use skills.** Agents MUST invoke the appropriate phase skill.
+4. **Fail fast.** Fix failing tests before moving on.
+5. **Incremental delivery.** Each task cycle should be deployable.
+
+## Git Safety
+
+1. Never force push.
+2. Never `git add .` or `git add -A`. Stage specific files.
+3. No interactive rebase.
+4. Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`).
+5. One concern per commit.
+6. Work on `main` unless CEO directs otherwise.
+
+## Worktree Isolation
+- **Enabled:** true
