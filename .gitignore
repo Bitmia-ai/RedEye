@@ -1,0 +1,50 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Runtime state
+.redeye/state.json
+.redeye/digest.json
+.redeye/gate-*
+
+# Claude Code local state
+.claude/
+
+# Session logs and specs
+.redeye/session-*.jsonl
+.redeye/specs/
+.worktrees/
+
+# Playwright MCP logs
+.playwright-mcp/
+
+# Build artifacts
+node_modules/
+.next/
+dist/
+coverage/
+test-results/
+*.tsbuildinfo
+
+# Logs
+*.log
+*.pid
+/tmp/
+
+# Debug screenshots
+*.png
+!.github/assets/*.png
+
+# Project control files (generated per-project by /init)
+.redeye/config.md
+.redeye/reference.md
+.redeye/tasks.md
+.redeye/changelog.md
+.redeye/feedback.md
+.redeye/inbox.md
+.redeye/status.md
+.redeye/steering.md
+.redeye/schedules.md
+.redeye/tester-reports.md
+.env.test

@@ -1,0 +1,15 @@
+{
+  "description": "RedEye hooks — manages loop continuation with resilient error handling",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

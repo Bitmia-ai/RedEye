@@ -1,0 +1,27 @@
+{
+  "name": "redeye",
+  "description": "Autonomous dev agent — works through your task list while you sleep. Zero config after install. Builds, reviews, deploys, and verifies each task end-to-end.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Bitmia-ai",
+    "url": "https://github.com/Bitmia-ai"
+  },
+  "homepage": "https://github.com/Bitmia-ai/RedEye",
+  "repository": "https://github.com/Bitmia-ai/RedEye",
+  "bugs": "https://github.com/Bitmia-ai/RedEye/issues",
+  "license": "MIT",
+  "keywords": ["redeye", "ralph-loop", "autonomous", "overnight", "development"],
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Edit(./**)",
+      "Write(./**)",
+      "Glob(./**)",
+      "Grep(./**)",
+      "Bash(*)",
+      "Agent(*)",
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}
