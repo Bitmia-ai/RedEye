@@ -22,6 +22,8 @@ It's an opinionated Claude Code plugin that follows a strict development cycle: 
 
 You stay in control. Every task comes from your task list. Steer with `/redeye:steer "prioritize performance"`. When RedEye can't decide, it logs the question to your inbox (see `/redeye:status`), picks a safe default, and keeps moving — or parks the task and moves on. It never guesses. If a task fails review three times, it parks it. When the task list is empty, RedEye stops and waits for new tasks.
 
+> <img src="https://raw.githubusercontent.com/Bitmia-ai/ControlTower/main/public/logo.svg" height="14" valign="middle" alt="" /> Prefer a UI to a terminal? **[Control Tower](https://github.com/Bitmia-ai/ControlTower)** gives RedEye a web dashboard — tasks, status, inbox, and controls in one place.
+
 > [!NOTE]
 > RedEye is a personal project maintained in spare time. It works, but updates are infrequent. Feedback and contributions welcome.
 
@@ -244,7 +246,6 @@ No. `/redeye:init` sets sensible defaults for everything. You only need to write
 
 ## Roadmap
 
-- **Control Tower** — web dashboard to manage RedEye across multiple projects from a browser. Start/stop sessions, view tasks/status/history, answer inbox questions, and steer.
 - **Telegram integration** — manage everything from your phone. Check status, answer questions, steer, and add tasks without a terminal.
 
 ## Contributing
