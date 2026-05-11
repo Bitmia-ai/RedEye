@@ -35,7 +35,16 @@ bash scripts/lock.sh "$MAIN_DIR/.redeye-git.lock" \
   -m "redeye: merge T{id} — {title}"
 ```
 
-If conflicts: abort merge, post to .redeye/inbox.md, set `merge_status` to `conflict`.
+If conflicts: abort merge, set `merge_status` to `conflict`, and post a blocking question via `scripts/create-question.sh` (the ONLY supported path for creating inbox questions):
+
+```bash
+bash scripts/create-question.sh \
+  --question "Merge conflict on <task>: which side wins, or should we abort?" \
+  --default "abort and re-plan" \
+  --options "take ours, take theirs, abort and re-plan" \
+  --blocks-task "<task-id>" \
+  --context "MERGE conflict; details in .redeye/status.md"
+```
 
 ## Step 3: Exclude Worktree-Only Files
 

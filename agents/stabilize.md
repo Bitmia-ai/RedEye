@@ -31,7 +31,14 @@ Increment `stabilize_attempts` (atomic write).
 
 - Fixed → recommend TRIAGE
 - Still broken AND attempts < 3 → recommend STABILIZE (retry)
-- Still broken AND attempts >= 3 → post blocking question to CEO in .redeye/inbox.md, park task and return to TRIAGE
+- Still broken AND attempts >= 3 → post a blocking question to CEO via `scripts/create-question.sh` (the ONLY supported path for creating inbox questions); park task and return to TRIAGE. Example:
+  ```bash
+  bash scripts/create-question.sh \
+    --question "<what's broken; what should we do?>" \
+    --default "<safe default — usually 'park and skip to next task'>" \
+    --blocks-task "<current-task-id>" \
+    --context "STABILIZE attempts exhausted (3/3); env still unhealthy"
+  ```
 
 ## Output
 

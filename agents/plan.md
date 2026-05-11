@@ -51,7 +51,18 @@ Write spec at `docs/specs/T{id}-{slug}.md`:
 - Architecture decisions
 - Sub-task decomposition with: Size (S/M/L), dependencies, assigned agent type, test strategy, acceptance criteria, status: pending
 
-Post questions to .redeye/inbox.md `## Questions (Open)` with defaults.
+Post questions to .redeye/inbox.md `## Questions (Open)` via `scripts/create-question.sh` — the ONLY supported path for creating inbox questions:
+
+```bash
+bash scripts/create-question.sh \
+  --question "<one-line ask>" \
+  --default "<sensible default the team will proceed with if unanswered>" \
+  [--options "opt1,opt2,opt3"] \
+  [--context "Blocks T<NNN>; <why it matters>"] \
+  [--blocks-task T<NNN>]
+```
+
+The script allocates the next `Q-NNN` ID atomically from `state.json.counters.next_q_id`, normalises the options spacing, validates that `--default` matches one of `--options` (when provided), and inserts the entry inside `## Questions (Open)` ahead of `## Credentials Needed`. Do NOT hand-author `### Q-NNN:` blocks — the CT inbox parser uses field bullets (`Question`, `Options`, `Default`, `Context`, `Answer`) and silently skips malformed entries.
 
 Update `.redeye/state.json` (atomic write):
 - Set `spec_file`, reset `phase_progress`, reset `review_cycles` to 0

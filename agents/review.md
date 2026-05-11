@@ -63,7 +63,16 @@ If the spec or git diff involves UI components, styles, themes, or layout AND Pl
 ## Step 5: Circuit Breaker
 
 Increment `review_cycles` in `.redeye/state.json` (atomic write).
-If `review_cycles` >= `max_review_cycles` (default 3): park task, post blocking question to CEO in .redeye/inbox.md.
+If `review_cycles` >= `max_review_cycles` (default 3): park task and post a blocking question to CEO via `scripts/create-question.sh` (the ONLY supported path for creating inbox questions):
+
+```bash
+bash scripts/create-question.sh \
+  --question "<task> has hit max review cycles. Push through, restructure, or drop?" \
+  --default "park task and skip to next" \
+  --options "push through, restructure spec, drop" \
+  --blocks-task "<task-id>" \
+  --context "REVIEW cycle cap reached (3/3)"
+```
 
 ## Step 6: Spawn Documenter (Background)
 
