@@ -35,6 +35,16 @@ NEVER modify: .redeye/config.md, .redeye/state.json, .redeye/status.md, .redeye/
 
 If BUILD discovers follow-up work (spillover scope, tech-debt spotted on contact, post-merge hardening), file it via `scripts/create-task.sh`. Do NOT inline it as a new sub-task in your current spec — file a separate Discovered entry so PLAN can triage it next iteration.
 
+If BUILD needs CEO action before the task can ship (visual walkthrough, ambiguous design decision, missing credential), file an inbox question via `scripts/create-question.sh` — the ONLY supported path for creating inbox questions. Do NOT hand-author `### T007-CEO:` / `### CEO-onboarding:` headers — those bypass the Q-NNN allocator and are silently invisible in the Control Tower dashboard (the parser regex is `^### (Q-\d+)`).
+
+```bash
+bash scripts/create-question.sh \
+  --question "<single-line ask, e.g. 'Walk onboarding step 3, confirm tiles render + Local selectable'>" \
+  --default "<safe default — usually 'block MERGE until CEO replies'>" \
+  --blocks-task "<current-task-id>" \
+  --context "Raised iteration N, BUILD phase, <reason>"
+```
+
 ```bash
 bash scripts/create-task.sh \
   --section discovered \

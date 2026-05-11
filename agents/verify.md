@@ -48,6 +48,16 @@ If unhealthy: set env unhealthy, mark for STABILIZE.
 
 Update `.redeye/state.json` (atomic write).
 
+**Posting an inbox question.** If verify or visual-check failure requires CEO action that cannot be auto-fixed (cluster offline, missing credentials, ambiguous design decision blocking deploy, etc.), file a question via `scripts/create-question.sh` — the ONLY supported path for creating inbox questions. Do NOT hand-author `### ENV-001:` / `### T007-CEO:` headers — those bypass the Q-NNN allocator and are silently invisible in the Control Tower dashboard (the parser regex is `^### (Q-\d+)`).
+
+```bash
+bash scripts/create-question.sh \
+  --question "<single-line ask>" \
+  --default "<safe default — usually 'block VERIFY/MERGE until resolved'>" \
+  --blocks-task "<current-task-id>" \
+  --context "<why it matters, raised at iteration N, VERIFY phase>"
+```
+
 ## Step 6: Update .redeye/changelog.md
 
 Append an iteration entry. The entry format:

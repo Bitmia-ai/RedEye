@@ -108,7 +108,7 @@ From MERGE → teardown worktree → TRIAGE
 From STABILIZE:
 - If env is now healthy: teardown worktree (if any) → TRIAGE
 - If env still unhealthy AND `stabilize_attempts` < 3: STABILIZE (retry, increment counter)
-- If env still unhealthy AND `stabilize_attempts` >= 3: teardown worktree (if any), park the task by appending a blocked entry to `.redeye/inbox.md`, reset state to `phase=TRIAGE`, then → TRIAGE
+- If env still unhealthy AND `stabilize_attempts` >= 3: teardown worktree (if any), park the task by posting a blocking question via `bash scripts/create-question.sh --question "<blocker>" --default "<safe default>" --blocks-task "<current-task>" --context "STABILIZE >=3 attempts, env still unhealthy"` (the ONLY supported path for inbox questions; hand-authored headers are silently invisible in the CT UI), reset state to `phase=TRIAGE`, then → TRIAGE
 From SCHEDULES → TRIAGE
 From INCORPORATE → TRIAGE
 
@@ -124,7 +124,7 @@ This step only applies when the completed phase was PLAN and the next phase will
 2. Read `task_id` from `.redeye/state.json` and strip the `T` prefix to get the numeric `T_ID` (e.g. `T42` → `42`).
 3. Run: `bash scripts/worktree.sh create "$PROJECT_ROOT" "$T_ID"`
 4. If create succeeds (state.json now has `worktree_path` and `worktree_branch` set): continue to Step 4.
-5. If create fails: post error to `.redeye/inbox.md`, park the task, reset state.json to phase=TRIAGE, phase_status=complete, and exit this iteration. Do NOT continue to Step 4 — the next iteration will re-triage.
+5. If create fails: post error via `bash scripts/create-question.sh --question "Worktree create failed for <task-id>" --default "Skip task and re-triage" --blocks-task "<task-id>" --context "Iteration N, worktree.sh create returned non-zero"`, park the task, reset state.json to phase=TRIAGE, phase_status=complete, and exit this iteration. Do NOT continue to Step 4 — the next iteration will re-triage.
 
 ## Step 4: Mark In-Progress
 
@@ -191,7 +191,7 @@ git commit -m "redeye: complete {PHASE} — {brief outcome} (iteration {n})"
 
 Run `bash scripts/worktree.sh teardown "$PROJECT_ROOT"` in these cases:
 - After MERGE completes successfully
-- After MERGE fails with conflict (also post failure to `.redeye/inbox.md`)
+- After MERGE fails with conflict (also post failure via `bash scripts/create-question.sh` — see `agents/merge.md` for the canonical merge-conflict invocation)
 - When parking a task (review circuit breaker: `review_cycles` >= `max_review_cycles`)
 - When STABILIZE exceeds max attempts
 - When parking a task from STABILIZE (max attempts reached)
