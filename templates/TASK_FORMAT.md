@@ -2,7 +2,9 @@
 
 The Control Tower UI and the digest.sh state machine both parse `.redeye/tasks.md` with a single, brittle regex grammar. Tasks that don't match the canonical shape are **silently dropped or truncated**. There is no warning, no log line, no UI badge — they just disappear.
 
-This file is the single source of truth. Every agent that creates, edits, or moves an entry in `.redeye/tasks.md` MUST follow it exactly.
+**Use `scripts/create-task.sh` to create tasks.** It is the only path that mechanically enforces this contract: it allocates IDs atomically from `state.json.counters.next_task_id`, writes the canonical block, rejects non-canonical bullets that would truncate the `Description` field, and inserts into the correct section. The agents (TRIAGE / PLAN / BUILD / REVIEW / SCHEDULES / INCORPORATE) and the user-facing slash commands (`/redeye:tasks`, `/redeye:brainstorm`) all call the same script. This document describes the contract the script enforces — read it when you need to *understand* the parser, not when you need to *create* a task.
+
+Hand-edits to `tasks.md` are accepted only for: status flips (e.g. `pending` → `in-progress`), moving an item between sections (e.g. Discovered → Triaged), and the `- **Summary:**` append at MERGE. Never hand-author a new `### T<NNN>:` block.
 
 ## Canonical task block
 

@@ -72,21 +72,18 @@ Documenter reads git diff, updates factual content only.
 
 ## Step 7: File Follow-up Discovered Items (Conditional)
 
-If your review surfaced Minor findings that you accepted (didn't block on) but that should be tracked as future work — or Major findings you parked because they're out of the task's spec — file them as new entries in `.redeye/tasks.md` `## Discovered` using the canonical Task Format below. Do NOT inline them into the current spec.
+If your review surfaced Minor findings that you accepted (didn't block on) but that should be tracked as future work — or Major findings you parked because they're out of the task's spec — file them via `scripts/create-task.sh`. Do NOT inline them into the current spec.
 
-### Task Format (REQUIRED — see `templates/TASK_FORMAT.md` for the full contract)
-
-```
-### T<NNN>: <title>           ← single colon, no parens, no trailing period
-- **Type:** <one line>
-- **Priority:** <one line>
-- **Status:** pending-triage
-- **Description:**
-  <free-form markdown; put Source/Proposal/Acceptance/Risk as inline **bold**
-  sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
+```bash
+bash scripts/create-task.sh \
+  --section discovered \
+  --title "<title>" \
+  --type <type> \
+  --priority <priority> \
+  --description-file /tmp/redeye-review-<n>.md
 ```
 
-ONLY these `- **Field:**` bullets are recognised by the parser: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet is silently dropped from the UI and truncates the `Description` capture at that line.
+`scripts/create-task.sh` is the ONLY supported path for creating tasks. Hand-authored `### T<NNN>:` blocks silently lose visibility in the dashboard. See `templates/TASK_FORMAT.md`.
 
 ## Output
 

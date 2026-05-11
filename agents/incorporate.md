@@ -16,23 +16,18 @@ Do NOT read files outside your listed scope: .redeye/inbox.md, related spec file
 For each Q-{id} with a CEO answer in .redeye/inbox.md:
 1. Read question context (what it affects, which task)
 2. Read CEO's answer
-3. If answer differs from default: create adjustment task (high priority) in `.redeye/tasks.md` `## Discovered` using the canonical Task Format below
+3. If answer differs from default: file an adjustment task in `## Discovered` via `scripts/create-task.sh` (the ONLY supported path for creating tasks):
+   ```bash
+   bash scripts/create-task.sh \
+     --section discovered \
+     --title "<title>" \
+     --type <type> \
+     --priority high \
+     --description-file /tmp/redeye-q-<id>.md
+   ```
+   See `templates/TASK_FORMAT.md` for the parser contract. Do NOT hand-author `### T<NNN>:` blocks.
 4. If same as default: no action
 5. Move to `## Answered / Provided` with incorporation note **and append** `**Incorporated:** {ISO timestamp}` on its own line under that Q entry. The digest reads this field to mark the answer as processed; without it, INCORPORATE will re-run the same Q forever next iteration.
-
-### Task Format (REQUIRED — see `templates/TASK_FORMAT.md` for the full contract)
-
-```
-### T<NNN>: <title>           ← single colon, no parens, no trailing period
-- **Type:** <one line>
-- **Priority:** <one line>
-- **Status:** pending-triage
-- **Description:**
-  <free-form markdown; put Source/Proposal/Acceptance/Risk as inline **bold**
-  sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
-```
-
-ONLY these `- **Field:**` bullets are recognised by the parser: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet is silently dropped from the UI and truncates the `Description` capture at that line.
 
 ## Step 2: Process Provided Credentials
 
