@@ -33,7 +33,7 @@ bash scripts/create-task.sh \
   --section discovered \
   --title "<title>" \
   --type tech-debt \
-  --priority medium \
+  --priority P2 \
   --description-file /tmp/redeye-task-<slug>.md
 ```
 

@@ -22,7 +22,7 @@ For each Q-{id} with a CEO answer in .redeye/inbox.md:
      --section discovered \
      --title "<title>" \
      --type <type> \
-     --priority high \
+     --priority P1 \
      --description-file /tmp/redeye-q-<id>.md
    ```
    See `templates/TASK_FORMAT.md` for the parser contract. Do NOT hand-author `### T<NNN>:` blocks.

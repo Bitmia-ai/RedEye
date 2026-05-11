@@ -34,28 +34,28 @@ teardown() { teardown_tmp_project; }
 @test "appends a Discovered task with the next ID" {
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
       --title "Replace ad-hoc retry with backoff" \
-      --type tech-debt --priority medium \
+      --type tech-debt --priority P2 \
       --description "Three call sites duplicate a retry loop."
   [ "$status" -eq 0 ]
   [ "$output" = "T007" ]
   grep -q "^### T007: Replace ad-hoc retry with backoff$" "$TMP_PROJECT/.redeye/tasks.md"
   grep -q "^- \*\*Type:\*\* tech-debt$"                   "$TMP_PROJECT/.redeye/tasks.md"
-  grep -q "^- \*\*Priority:\*\* medium$"                  "$TMP_PROJECT/.redeye/tasks.md"
+  grep -q "^- \*\*Priority:\*\* P2$"                      "$TMP_PROJECT/.redeye/tasks.md"
   grep -q "^- \*\*Status:\*\* pending-triage$"            "$TMP_PROJECT/.redeye/tasks.md"
   grep -q "^- \*\*Description:\*\*$"                      "$TMP_PROJECT/.redeye/tasks.md"
 }
 
 @test "bumps next_task_id atomically" {
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
-      --title "x" --type test --priority low
+      --title "x" --type test --priority P3
   [ "$status" -eq 0 ]
   next="$(jq -r '.counters.next_task_id' "$TMP_PROJECT/.redeye/state.json")"
   [ "$next" = "8" ]
 }
 
 @test "allocates monotonic IDs across two consecutive calls" {
-  "$CREATE_TASK" --project-root "$TMP_PROJECT" --title "a" --type test --priority low >/dev/null
-  run "$CREATE_TASK" --project-root "$TMP_PROJECT" --title "b" --type test --priority low
+  "$CREATE_TASK" --project-root "$TMP_PROJECT" --title "a" --type test --priority P3 >/dev/null
+  run "$CREATE_TASK" --project-root "$TMP_PROJECT" --title "b" --type test --priority P3
   [ "$status" -eq 0 ]
   [ "$output" = "T008" ]
   next="$(jq -r '.counters.next_task_id' "$TMP_PROJECT/.redeye/state.json")"
@@ -64,7 +64,7 @@ teardown() { teardown_tmp_project; }
 
 @test "inserts new task INSIDE the requested section (not after the next one)" {
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
-      --title "discovered item" --type test --priority low
+      --title "discovered item" --type test --priority P3
   [ "$status" -eq 0 ]
   # Order in the file: ## Discovered header should appear before T007, T007 before ## Triaged
   disc_line="$(grep -n '^## Discovered'   "$TMP_PROJECT/.redeye/tasks.md" | cut -d: -f1)"
@@ -88,7 +88,7 @@ teardown() { teardown_tmp_project; }
 
 @test "section triaged defaults status to planned" {
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
-      --section triaged --title "triaged item" --type feature --priority high
+      --section triaged --title "triaged item" --type feature --priority P1
   [ "$status" -eq 0 ]
   awk '/^### T007:/{f=1} f && /^- \*\*Status:\*\*/{print; exit}' \
     "$TMP_PROJECT/.redeye/tasks.md" | grep -q "planned"
@@ -96,7 +96,7 @@ teardown() { teardown_tmp_project; }
 
 @test "explicit --status overrides section default" {
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
-      --title "x" --type test --priority low --status blocked
+      --title "x" --type test --priority P3 --status blocked
   [ "$status" -eq 0 ]
   awk '/^### T007:/{f=1} f && /^- \*\*Status:\*\*/{print; exit}' \
     "$TMP_PROJECT/.redeye/tasks.md" | grep -q "blocked"
@@ -151,6 +151,29 @@ EOF
 
 # --- Rejections ------------------------------------------------------------
 
+@test "priority is case-normalised to upper P-form" {
+  run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
+      --title "x" --type test --priority p1
+  [ "$status" -eq 0 ]
+  grep -q "^- \*\*Priority:\*\* P1$" "$TMP_PROJECT/.redeye/tasks.md"
+}
+
+@test "rejects legacy word-form priorities with mapping hint" {
+  for legacy in critical high medium low; do
+    run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
+        --title "x" --type test --priority "$legacy"
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"legacy '$legacy'"* ]]
+  done
+}
+
+@test "rejects unknown --priority" {
+  run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
+      --title "x" --type test --priority "urgent"
+  [ "$status" -ne 0 ]
+  [[ "$output" == *"--priority must be one of"* ]]
+}
+
 @test "rejects unknown --section" {
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
       --section discoverd --title x --type feature --priority P2
@@ -195,7 +218,7 @@ EOF
 @test "rejects when .redeye/state.json is missing" {
   rm "$TMP_PROJECT/.redeye/state.json"
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
-      --title x --type test --priority low
+      --title x --type test --priority P3
   [ "$status" -ne 0 ]
   [[ "$output" == *"missing state.json"* ]]
 }
@@ -203,7 +226,7 @@ EOF
 @test "rejects when .redeye/tasks.md is missing" {
   rm "$TMP_PROJECT/.redeye/tasks.md"
   run "$CREATE_TASK" --project-root "$TMP_PROJECT" \
-      --title x --type test --priority low
+      --title x --type test --priority P3
   [ "$status" -ne 0 ]
   [[ "$output" == *"missing tasks.md"* ]]
 }

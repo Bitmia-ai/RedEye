@@ -21,7 +21,10 @@ Allocates the next T<NNN> ID atomically from .redeye/state.json.
 Required:
   --title TITLE             Single-line task title (max 200 chars).
   --type TYPE               e.g. feature, bug, tech-debt, docs, infra, ux, security, test.
-  --priority PRIORITY       P0|P1|P2|P3 or critical|high|medium|low.
+  --priority PRIORITY       P0|P1|P2|P3 (case-insensitive). The Control Tower
+                            UI and the RedEye agents have converged on the
+                            P-form. Word forms (critical/high/medium/low) are
+                            rejected with a hint to the equivalent P-tier.
 
 Optional:
   --section SECTION         ceo | discovered | triaged | wontdo
@@ -89,6 +92,27 @@ err() { echo "create-task.sh: $1" >&2; exit 2; }
 [[ -n "$title" ]]    || err "--title is required"
 [[ -n "$type" ]]     || err "--type is required"
 [[ -n "$priority" ]] || err "--priority is required"
+
+# --- Priority canonicalisation ---
+# Single allow-list: P0|P1|P2|P3. The Control Tower UI emits these and the
+# RedEye agents are converging on them. Word forms (critical/high/medium/low)
+# are still parsed by the CT UI for backward compat but new entries must use
+# the P-form. Mapping for migration:
+#   P0 ↔ critical
+#   P1 ↔ high
+#   P2 ↔ medium
+#   P3 ↔ low
+case "$(echo "$priority" | tr '[:upper:]' '[:lower:]')" in
+  p0)       priority=P0 ;;
+  p1)       priority=P1 ;;
+  p2)       priority=P2 ;;
+  p3)       priority=P3 ;;
+  critical) err "--priority: use 'P0' (legacy 'critical'); see scripts/create-task.sh --help" ;;
+  high)     err "--priority: use 'P1' (legacy 'high'); see scripts/create-task.sh --help" ;;
+  medium)   err "--priority: use 'P2' (legacy 'medium'); see scripts/create-task.sh --help" ;;
+  low)      err "--priority: use 'P3' (legacy 'low'); see scripts/create-task.sh --help" ;;
+  *) err "--priority must be one of: P0, P1, P2, P3 (got: $priority)" ;;
+esac
 
 # --- Validate section ---
 case "$section" in

@@ -11,7 +11,7 @@ Hand-edits to `tasks.md` are accepted only for: status flips (e.g. `pending` →
 ```
 ### T<NNN>: <title>
 - **Type:** <one line — feature | bug | tech-debt | docs | infra | ux | security | test | ...>
-- **Priority:** <one line — P0 | P1 | P2 | P3, or critical | high | medium | low>
+- **Priority:** <one line — P0 | P1 | P2 | P3 (case-insensitive; see legacy mapping below)>
 - **Status:** <one of: pending | pending-triage | planned | in-progress | done | blocked | wontdo>
 - **Spec:** docs/specs/T<NNN>-<slug>.md            ← optional, single line
 - **Summary:** <one line — set by MERGE when work ships>   ← optional, single line
@@ -21,6 +21,19 @@ Hand-edits to `tasks.md` are accepted only for: status flips (e.g. `pending` →
   not-in-scope, etc. Use plain markdown sub-headers (e.g. `**Acceptance**`)
   inside the description — NOT as `- **Xxx:**` bullets at task level.>
 ```
+
+## Priority — canonical alphabet
+
+Only `P0`, `P1`, `P2`, `P3` (case-insensitive, normalised to upper). `scripts/create-task.sh` rejects the legacy word forms (`critical`/`high`/`medium`/`low`) with a hint to the equivalent P-tier:
+
+| Legacy | Canonical |
+|--------|-----------|
+| critical | P0 |
+| high     | P1 |
+| medium   | P2 |
+| low      | P3 |
+
+The Control Tower UI parser still reads the legacy forms in tasks that pre-date the conversion (the field is a free-form string), but no agent or human path emits them anymore.
 
 ## Allow-listed field markers
 
@@ -72,7 +85,7 @@ What used to be top-level `- **Acceptance:**` becomes inline `**Acceptance**` in
 ```markdown
 ### T042: Replace ad-hoc retry with exponential backoff
 - **Type:** tech-debt
-- **Priority:** medium
+- **Priority:** P2
 - **Status:** pending
 - **Description:**
   **Source.** Discovered during T037 build — three call sites copy-paste a 3×100ms retry loop.
