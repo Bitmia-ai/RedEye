@@ -33,6 +33,22 @@ Fix pre-existing issues on contact — commit separately: `fix: pre-existing {de
 
 NEVER modify: .redeye/config.md, .redeye/state.json, .redeye/status.md, .redeye/steering.md
 
+If BUILD discovers follow-up work (spillover scope, tech-debt spotted on contact, post-merge hardening), file it in `.redeye/tasks.md` `## Discovered` using the canonical Task Format below. Do NOT inline it as a new sub-task in your current spec — file a separate Discovered entry so PLAN can triage it next iteration.
+
+### Task Format (REQUIRED — see `templates/TASK_FORMAT.md` for the full contract)
+
+```
+### T<NNN>: <title>           ← single colon, no parens, no trailing period
+- **Type:** <one line>
+- **Priority:** <one line>
+- **Status:** pending-triage
+- **Description:**
+  <free-form markdown; put Source/Proposal/Acceptance/Risk as inline **bold**
+  sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
+```
+
+ONLY these `- **Field:**` bullets are recognised by the parser: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet (`Source`, `Proposal`, `Acceptance`, `Risk`, `Notes`, `Rationale`, etc.) is silently dropped from the UI and truncates the `Description` capture at that line. `T<NNN>` is allocated from `state.json.counters.next_task_id` and the counter bumped atomically in the same commit.
+
 ## Step 3: Write E2E Tests
 
 After all sub-tasks are done, write Playwright E2E tests for the new feature if .redeye/config.md has an App URL. Do NOT run full regression (that's DEPLOY).

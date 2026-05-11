@@ -55,6 +55,8 @@ Edit control files directly. The digest is regenerated before each phase.
 
 Completed content is swept out of the active control files at each MERGE into `docs/tasks-archive/`, `docs/inbox-archive/`, and `docs/changelog-archive/` (monthly bucketed files) so the active files stay lean.
 
+**Task format is a parser contract — not a suggestion.** Every entry in `.redeye/tasks.md` must conform to the canonical shape documented in `templates/TASK_FORMAT.md`. The Control Tower UI parser and `digest.sh` both use a brittle regex grammar. Non-canonical `- **Field:**` bullets (e.g. `- **Source:**`, `- **Proposal:**`, `- **Acceptance:**`, `- **Notes:**`, `- **Rationale:**`) are **silently dropped from the UI and truncate the multi-line `Description` capture**. Headers like `### T004 (P1): Foo` are silently skipped. Every task-creating agent (TRIAGE, PLAN, BUILD, REVIEW, SCHEDULES) inlines this contract; if you add a new agent that writes to `tasks.md`, copy the "Task Format" section from `agents/triage.md` into it.
+
 ## Architecture
 
 | Directory | Contains |

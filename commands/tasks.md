@@ -17,19 +17,25 @@ You expand the input into a proper task entry. The user should NOT have to write
    - Infer a **priority** (P0 / P1 / P2 / P3) from urgency words ("critical", "nice to have", "ASAP", etc.) — default P2 if unclear
    - Sketch 2–5 concrete **details** the TRIAGE/PLAN agents can use: acceptance criteria, likely files touched, edge cases, anything the user implied but didn't say
 
-3. Append to the `## CEO Requests` section:
+3. Append to the `## CEO Requests` section using the canonical Task Format (see `templates/TASK_FORMAT.md`):
    ```
    ### T{next_task_id}: {inferred title}
    - **Type:** {inferred type}
    - **Priority:** {inferred priority}
    - **Status:** pending
-   - **Details:**
-     - {specific detail 1}
-     - {specific detail 2}
-     - {specific detail 3}
+   - **Description:**
+     {one-paragraph context inferred from the user's input}
+
+     **Acceptance**
+
+     - {acceptance criterion 1}
+     - {acceptance criterion 2}
+     - {acceptance criterion 3}
    ```
 
-   Keep the details concise and factual. Do NOT invent constraints the user didn't imply. If something is truly ambiguous, write it as a question the PLAN phase will resolve (e.g., "Decision: which icon library to use for the toggle").
+   Keep the description concise and factual. Do NOT invent constraints the user didn't imply. If something is truly ambiguous, write it as a question the PLAN phase will resolve (e.g., "Decision: which icon library to use for the toggle").
+
+   **Parser contract reminder.** The UI parser only recognises these `- **Field:**` bullets: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet (`Source`, `Proposal`, `Acceptance`, `Risk`, `Notes`, etc.) is silently dropped and truncates the `Description` capture. Header must be `### T<NNN>: <title>` — single colon, no `(P1)` qualifier, no trailing period.
 
 4. Increment `counters.next_task_id` in `.redeye/state.json` (atomic write).
 

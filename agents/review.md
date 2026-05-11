@@ -70,6 +70,24 @@ If `review_cycles` >= `max_review_cycles` (default 3): park task, post blocking 
 If code changed, spawn Documenter agent in background to update CLAUDE.md files.
 Documenter reads git diff, updates factual content only.
 
+## Step 7: File Follow-up Discovered Items (Conditional)
+
+If your review surfaced Minor findings that you accepted (didn't block on) but that should be tracked as future work — or Major findings you parked because they're out of the task's spec — file them as new entries in `.redeye/tasks.md` `## Discovered` using the canonical Task Format below. Do NOT inline them into the current spec.
+
+### Task Format (REQUIRED — see `templates/TASK_FORMAT.md` for the full contract)
+
+```
+### T<NNN>: <title>           ← single colon, no parens, no trailing period
+- **Type:** <one line>
+- **Priority:** <one line>
+- **Status:** pending-triage
+- **Description:**
+  <free-form markdown; put Source/Proposal/Acceptance/Risk as inline **bold**
+  sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
+```
+
+ONLY these `- **Field:**` bullets are recognised by the parser: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet is silently dropped from the UI and truncates the `Description` capture at that line.
+
 ## Output
 
 Write to .redeye/status.md with review findings before returning.

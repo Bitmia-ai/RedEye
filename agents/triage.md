@@ -35,10 +35,28 @@ If readable, note which task IDs are claimed by OTHER instances (not this one). 
 
 If .redeye/tester-reports.md has entries:
 - For each bug report, scan ALL sections of .redeye/tasks.md for existing items that describe the same issue (same bug, same component, same behavior). If a match exists, skip the duplicate and note it in your output.
-- Copy only NEW (non-duplicate) bug reports to .redeye/tasks.md `## Discovered` as `pending-triage`
+- Copy only NEW (non-duplicate) bug reports to .redeye/tasks.md `## Discovered` as `pending-triage`. Translate the tester-report fields into the canonical task shape (see "Task Format" below) — the BUG report's `- **Source:**`, `- **Steps to reproduce:**`, `- **Expected / Actual:**`, `- **Screenshot:**` bullets MUST be collapsed into a single `- **Description:**` field as inline `**bold**` sub-headers, NOT copied across as separate `- **Xxx:**` bullets (they would be silently dropped by the UI parser).
 - Allocate task IDs via local counter (increment `counters.next_task_id` in state, atomic write)
 - Clear .redeye/tester-reports.md (replace with header template)
 - Commit: `git add .redeye/tester-reports.md .redeye/tasks.md .redeye/state.json && git commit -m "redeye: merge tester reports to tasks"`
+
+### Task Format (REQUIRED — see `templates/TASK_FORMAT.md` for the full contract)
+
+Any entry you write or modify in `.redeye/tasks.md` MUST use this exact shape:
+
+```
+### T<NNN>: <title>           ← single colon, no parens like (P1), no trailing period
+- **Type:** <one line>
+- **Priority:** <one line>
+- **Status:** <pending|pending-triage|planned|in-progress|done|blocked|wontdo>
+- **Description:**
+  <free-form markdown; put aux sections (source, proposal, acceptance, risk, owner, method, etc.)
+  as inline **bold** sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
+```
+
+ONLY these `- **Field:**` bullets are recognised by the Control Tower UI parser: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet (`Source`, `Proposal`, `Acceptance`, `Risk`, `Notes`, `Rationale`, `Owner`, `Method.`, `Steps to reproduce`, etc.) is **silently dropped from the UI and truncates the `Description` capture at that line**. Header regex: `/^### (T\d+):\s*(.+)$/m` — `### T004 (P1): Foo` is silently skipped. Status strings must match `normalizeStatus()` (anything unknown silently degrades to `pending`).
+
+Before committing tasks.md, scan each new/modified `### T` block and verify every `- **Xxx:**` bullet is in the allow-list above. If not, restructure as `**Xxx**` plain bold inside `Description`.
 
 ## Step 3: Audit Documenter Commits
 

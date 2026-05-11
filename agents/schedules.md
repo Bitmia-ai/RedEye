@@ -27,8 +27,22 @@ Spawn agents as specified in each task's `Assigned to` field. Follow numbered st
 
 ## Step 3: Update
 
-Update `Last run` timestamps. Add any discovered work to .redeye/tasks.md `## Discovered`.
+Update `Last run` timestamps. Add any discovered work to .redeye/tasks.md `## Discovered` using the canonical shape below.
 Commit: `git add .redeye/schedules.md .redeye/tasks.md .redeye/state.json && git commit -m "redeye: schedules — ran {n} tasks"`
+
+### Task Format (REQUIRED — see `templates/TASK_FORMAT.md` for the full contract)
+
+```
+### T<NNN>: <title>           ← single colon, no parens, no trailing period
+- **Type:** <one line>
+- **Priority:** <one line>
+- **Status:** pending-triage
+- **Description:**
+  <free-form markdown; put Source/Proposal/Acceptance/Risk/Notes as inline **bold**
+  sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
+```
+
+ONLY these `- **Field:**` bullets are read by the parser: `Type`, `Priority`, `Status`, `Spec`, `Summary`, `Description`, `Details`, `Reason`, `Merged`. ANY OTHER `- **Xxx:**` bullet is silently dropped from the UI and truncates the `Description` capture at that line.
 
 ## Output
 

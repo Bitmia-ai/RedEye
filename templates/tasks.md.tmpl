@@ -1,5 +1,26 @@
 # Tasks
 
+<!--
+Canonical task format (see templates/TASK_FORMAT.md for the full contract):
+
+  ### T<NNN>: <title>           ← single colon, no parens like (P1), no trailing period
+  - **Type:** <one line>
+  - **Priority:** <one line>
+  - **Status:** <pending|pending-triage|planned|in-progress|done|blocked|wontdo>
+  - **Spec:** docs/specs/T<NNN>-<slug>.md         ← optional
+  - **Summary:** <one line — set by MERGE when work ships>   ← optional
+  - **Description:**
+    <free-form markdown; put aux sections (source, proposal, acceptance, risk, owner, method, etc.)
+    as inline **bold** sub-headers HERE, NOT as `- **Xxx:**` bullets at task level>
+
+ONLY these `- **Field:**` bullets are read by the Control Tower UI parser:
+  Type, Priority, Status, Spec, Summary, Description, Details, Reason, Merged
+
+ANY OTHER `- **Xxx:**` bullet (Source, Proposal, Acceptance, Risk, Notes,
+Rationale, Owner, Method., etc.) is silently dropped from the UI and
+truncates the multi-line Description capture at that line.
+-->
+
 ## CEO Requests
 _(User adds items here. Agents never modify this section.)_
 
@@ -7,6 +28,8 @@ _(User adds items here. Agents never modify this section.)_
 - **Type:** feature
 - **Priority:** critical
 - **Status:** pending
+- **Description:**
+  {{FIRST_TASK_DESCRIPTION}}
 
 ## Discovered
 _(Agents append here. VP Product triages during PLAN.)_
