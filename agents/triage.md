@@ -64,12 +64,14 @@ If found, verify changes are factual only. Revert if rule/constraint changes det
 ## Step 5: Decide Next Phase
 
 Evaluate in order and write the chosen phase to `.redeye/status.md` (the CTO orchestrator reads this when interpreting your return summary):
-1. **STABILIZE** if env unhealthy
+1. **STABILIZE** if env unhealthy. **Always route to STABILIZE on env_unhealthy** — even if the previous STABILIZE cycle exhausted attempts and you're back here on a later iteration. STABILIZE's Step 1 is now "restart the dev environment" (cheap, idempotent); a stale `stabilize_attempts=3` from a prior code-diagnosis cycle MUST NOT block the env-restart attempt. If you observe `stabilize_attempts >= 3` and env is still unhealthy, reset `stabilize_attempts` to 0 in state.json (atomic) before routing — this counter is for code-diagnosis fatigue, not env-restart fatigue. Never park the loop on env_unhealthy without giving STABILIZE the chance to run its restart step first.
 2. **SCHEDULES** if overdue scheduled tasks
 3. **INCORPORATE** if CEO answered questions/provided credentials
 4. **PLAN** if any pending CEO Requests — select highest-priority (skip claimed items)
 5. **PLAN** if any `planned` or `pending-triage` items — select highest-priority unclaimed
 6. **IDLE** if ALL task queues are empty/complete — return `Next phase: IDLE` in your summary. **Do NOT emit `<promise>CEO DIRECTED STOP</promise>` from this sub-agent**: that promise tag is the CTO orchestrator's responsibility (it's the kill-signal ralph-loop's stop-hook matches against, and emitting it from a Task() subagent confuses the orchestrator's state-update flow). The CTO will see `IDLE` in your summary and emit the literal promise tag itself.
+
+**Never self-park.** Do NOT decide on your own to "park the loop" because the visible task queue looks unworkable (e.g. "all remaining tasks need the cluster, and the cluster is offline"). The rules above are exhaustive — apply them mechanically. If env is unhealthy → STABILIZE; the env-restart step will bring the cluster back without CEO intervention. If env is healthy → pick the next PLAN-able item. If nothing remains → IDLE (per rule 6). "PARKED" is not a phase the orchestrator schedules — emitting it from TRIAGE strands the loop in a no-progress state.
 
 ## Step 6: Write Claim (if routing to PLAN)
 
