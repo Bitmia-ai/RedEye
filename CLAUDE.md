@@ -55,6 +55,8 @@ Edit control files directly. The digest is regenerated before each phase.
 
 Completed content is swept out of the active control files at each MERGE into `docs/tasks-archive/`, `docs/inbox-archive/`, and `docs/changelog-archive/` (monthly bucketed files) so the active files stay lean.
 
+**Persona testing is orchestrated by Control Tower, not by RedEye.** The `agents/user-tester.md` prompt remains the canonical walk-instruction file; CT spawns short-lived Claude subprocesses against it on cadenced schedules and writes per-persona state to `.redeye/personas.json`. When using RedEye standalone (no CT), persona testing does not run automatically — invoke the user-tester subagent manually via `Task()` from a separate session if desired.
+
 **Task creation goes through `scripts/create-task.sh` — full stop.** Hand-authored `### T<NNN>:` markdown blocks bypass the parser contract (`templates/TASK_FORMAT.md`) and silently disappear from the Control Tower UI. The script atomically allocates the next ID from `state.json.counters.next_task_id`, writes the canonical block into the requested section, and refuses non-canonical bullets that would truncate the `Description` field. Every agent that creates tasks (TRIAGE, PLAN, BUILD, REVIEW, SCHEDULES, INCORPORATE) and every user-facing command (`/redeye:tasks`, `/redeye:brainstorm`) calls the same script. Hand-edits to `tasks.md` are accepted only for status flips, section moves, and the `- **Summary:**` append at MERGE — never to create new entries.
 
 ## Architecture

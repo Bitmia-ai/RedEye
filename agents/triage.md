@@ -55,10 +55,6 @@ If found, verify changes are factual only. Revert if rule/constraint changes det
 
 ## Step 4: Spawn Background Agents (Conditional)
 
-**User Tester** — Only if a new DEPLOY happened since last tester run:
-- Check `.redeye/state.json` `health.iterations_since_last_deploy` — if 0, respawn
-- Rotate `persona_index`
-
 **Documenter** — Only if code changed in last REVIEW.
 
 ## Step 5: Decide Next Phase
